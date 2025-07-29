@@ -42,10 +42,41 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - mariadb
+      - redis
     restart: on-failure
     ports: 
       - "9000:9000"
 
+  redis:
+    container_name: redis
+    env_file: .env
+    volumes:
+      - redis:/var/lib/redis
+    networks:
+      - inception
+    build: 
+      context: requirements/bonus/redis
+      dockerfile: Dockerfile
+    restart: on-failure
+    ports: 
+      - "6379:6379"
+
+  ftp:
+    container_name: ftp
+    build: 
+      context: requirements/bonus/ftp
+      dockerfile: Dockerfile
+    env_file: .env
+    networks:
+      - inception
+    volumes:
+      - wordpress:/var/www/wordpress
+    ports:
+      - "21:21"
+      - "21000-21010:21000-21010"
+    restart: on-failure
+    depends_on:
+      - wordpress
 
 volumes:
   mariadb:
@@ -61,6 +92,13 @@ volumes:
       type: 'none'
       o: 'bind'
       device: '/home/caburges/data/wordpress'
+
+  redis:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/caburges/data/redis'
  
 networks:
   inception:

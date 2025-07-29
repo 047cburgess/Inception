@@ -17,10 +17,10 @@ echo -e "${CYAN}Setting ownership...${NC}"
 chown -R www-data:www-data /var/www/wordpress
 
 if [ ! -f /var/www/wordpress/wp-config.php ]; then
-	echo "Downloading WordPress..."
+	echo -e "Downloading WordPress..."
 	wp core download --path=/var/www/wordpress --allow-root
 
-	echo "Creating wp-config.php..."
+	echo -e "Creating wp-config.php..."
    	 wp config create \
         --path=/var/www/wordpress \
         --dbname=${WORDPRESS_DB_NAME} \
@@ -29,7 +29,7 @@ if [ ! -f /var/www/wordpress/wp-config.php ]; then
         --dbhost=${WORDPRESS_DB_HOST} \
         --allow-root
 
-    	echo "Installing WordPress..."
+    	echo -e "Installing WordPress..."
     	wp core install \
         --path=/var/www/wordpress \
         --url=${WORDPRESS_URL} \
@@ -40,7 +40,7 @@ if [ ! -f /var/www/wordpress/wp-config.php ]; then
         --skip-email \
         --allow-root
 
-	echo "Creating second wp user..."
+	echo -e "Creating second wp user..."
     	wp user create \
 	${WORDPRESS_DB_USER} \
 	${WORDPRESS_DB_USER_EMAIL} \
@@ -48,13 +48,21 @@ if [ ! -f /var/www/wordpress/wp-config.php ]; then
 	--user_pass=${WORDPRESS_DB_USER_PASSWORD} \
 	--role=editor \
 	--allow-root
+
 fi
+	echo -e "${CYAN}Configuring Redis connection...${NC}"
+	wp config set WP_REDIS_HOST "${WP_REDIS_HOST}" --allow-root --path=/var/www/wordpress
+	wp config set WP_REDIS_PORT "${WP_REDIS_PORT}" --allow-root --path=/var/www/wordpress
+	
+	echo -e "${CYAN}Installing Redis plugin...${NC}"
+	wp plugin install redis-cache --activate --allow-root --path=/var/www/wordpress
+	
+	echo -e "${CYAN}Enabling Redis plugin...${NC}"
+	wp redis enable --allow-root --path=/var/www/wordpress
 
-
-
-cat /var/www/wordpress/wp-config.php
+	echo -e "${CYAN}Setting ownership...${NC}"
+	chown -R www-data:www-data /var/www/wordpress/wp-content/object-cache.php
 
 # Start PHP-FPM
-
 echo -e "${GREEN}Starting PHP-FPM...${NC}"
 exec php-fpm7.4 -F --nodaemonize
