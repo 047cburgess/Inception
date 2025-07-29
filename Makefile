@@ -1,6 +1,7 @@
-DOCKER_COMPOSE = docker-compose
-DOCKER_COMPOSE_FILE = ./srcs/docker-compose.yml
-PROJECT_NAME = inception
+DOCKER_COMPOSE = docker compose -f ./srcs/docker-compose.yml
+WORDPRESS_DIR = /home/caburges/data/wordpress
+MARIADB_DIR = /home/caburges/data/mariadb
+NAME = inception
 
 # Colors for output
 RED = \033[0;31m
@@ -9,49 +10,34 @@ YELLOW = \033[0;33m
 BLUE = \033[0;34m
 NC = \033[0m # No Color
 
-# Default target
-all: build up
-
-build:
-	@echo "$(YELLOW)Building...$(NC)"
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
-	@echo "$(GREEN)Building successful!$(NC)"
+all: up
 
 up: build
-	@echo "$(YELLOW)Building and starting services...$(NC)"
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up
-	@echo "$(GREEN)All services are up and running!$(NC)"
-	@echo "$(BLUE)WordPress is available at: https://caburges.42.fr$(NC)"
+	@echo "$(YELLOW)🚀 Starting services...$(NC)"
+	$(DOCKER_COMPOSE) up -d
+	@echo "$(GREEN)🚀 Services built! You can connect at caburges.42.fr$(NC)"
 
-start:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
-
-stop:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) stop
-
-restart:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) stop
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up
-	
-logs:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) logs
-
-status:
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) ps
-
-ps: status
-
-# Stop services
 down:
-	@echo "$(YELLOW)Stopping services...$(NC)"
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
-	@echo "$(GREEN)Services stopped successfully!$(NC)"
+	@echo "$(RED)🛑 Stopping services...$(NC)"
+	$(DOCKER_COMPOSE) down
 
-# Clean containers and networks
-clean: down
-	@echo "$(YELLOW)Cleaning containers, networks and images...$(NC)"
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down -v --rmi all
-	@docker system prune -f
-	@echo "$(GREEN)Cleanup completed!$(NC)"
+build:
+	@mkdir -p $(WORDPRESS_DIR)
+	@mkdir -p $(MARIADB_DIR)
+	@echo "$(YELLOW)🚀 Building services...$(NC)"
+	$(DOCKER_COMPOSE) build
 
-.PHONY : all down build up start stop clean fclean re restart logs status ps
+
+fclean:
+	$(DOCKER_COMPOSE) down -v --remove-orphans
+	#sudo rm -rf ~/data/*
+
+logs:
+	$(DOCKER_COMPOSE) logs -f
+
+ps:
+	$(DOCKER_COMPOSE) ps
+
+re: fclean all
+
+.PHONY: all up down build fclean re logs ps

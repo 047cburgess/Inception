@@ -1,9 +1,4 @@
 #!/bin/bash
-# Create directory for PHP-FPM PID file
-
-#caburges
-#mypassword
-#rootpassword
 
 # Colors for output (fix: no spaces around = and proper quotes)
 RED='\033[0;31m'
@@ -16,28 +11,46 @@ NC='\033[0m' # No Color
 
 echo "Beginning the script.sh of Wordpress"
 
-sleep 5
 mkdir -p /run/php
-
-echo -e "${BLUE}Replacing database name...${NC}"
-sed -i "s/database_name_here/$MYSQL_DATABASE/g" /var/www/wordpress/wp-config-sample.php
-
-echo -e "${RED}Replacing database username...${NC}"
-sed -i "s/username_here/$MYSQL_USER/g" /var/www/wordpress/wp-config-sample.php
-
-echo -e "${GREEN}Replacing database password...${NC}"
-sed -i "s/password_here/$MYSQL_PASSWORD/g" /var/www/wordpress/wp-config-sample.php
-
-echo -e "${YELLOW}Replacing database hostname...${NC}"
-
- #Replace empty DB_HOST with mariadb in wp-config-sample.php
-sed -i "s/define( 'DB_HOST', 'localhost' );/define( 'DB_HOST', 'mariadb' );/g" /var/www/wordpress/wp-config-sample.php
-
-echo -e "${PURPLE}Copying wp-config file...${NC}"
-cp /var/www/wordpress/wp-config-sample.php /var/www/wordpress/wp-config.php
 
 echo -e "${CYAN}Setting ownership...${NC}"
 chown -R www-data:www-data /var/www/wordpress
+
+if [ ! -f /var/www/wordpress/wp-config.php ]; then
+	echo "Downloading WordPress..."
+	wp core download --path=/var/www/wordpress --allow-root
+
+	echo "Creating wp-config.php..."
+   	 wp config create \
+        --path=/var/www/wordpress \
+        --dbname=${WORDPRESS_DB_NAME} \
+        --dbuser=${WORDPRESS_DB_ADMIN} \
+        --dbpass=${WORDPRESS_DB_ADMIN_PASSWORD} \
+        --dbhost=${WORDPRESS_DB_HOST} \
+        --allow-root
+
+    	echo "Installing WordPress..."
+    	wp core install \
+        --path=/var/www/wordpress \
+        --url=${WORDPRESS_URL} \
+        --title="${WORDPRESS_TITLE}" \
+        --admin_user=${WORDPRESS_DB_ADMIN} \
+        --admin_password=${WORDPRESS_DB_ADMIN_PASSWORD} \
+        --admin_email=${WORDPRESS_DB_ADMIN_EMAIL} \
+        --skip-email \
+        --allow-root
+
+	echo "Creating second wp user..."
+    	wp user create \
+	${WORDPRESS_DB_USER} \
+	${WORDPRESS_DB_USER_EMAIL} \
+        --path=/var/www/wordpress \
+	--user_pass=${WORDPRESS_DB_USER_PASSWORD} \
+	--role=editor \
+	--allow-root
+fi
+
+
 
 cat /var/www/wordpress/wp-config.php
 

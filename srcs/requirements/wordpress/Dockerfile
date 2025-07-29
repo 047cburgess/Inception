@@ -1,20 +1,27 @@
 FROM	    debian:bullseye
 
-RUN	        apt-get update && apt-get upgrade -y && apt-get install -y	\
-						wget \
-                        unzip
+RUN	    apt-get update && apt-get upgrade -y && apt-get install -y	\
+		wget \
+                unzip \
+                curl \
+                vim \
+                sudo \	
+		php7.4 \
+		php7.4-cli \
+		php7.4-fpm \
+		php7.4-mysql \
+		mariadb-client \
+		php7.4-gd \
+		php7.4-curl \
+		php7.4-xml \
+		php7.4-mbstring \
+		php7.4-json \
+		php7.4-zip
 
-RUN         apt-get install -y php7.4\
-						php-fpm\
-						php-mysql\
-						mariadb-client\
-                        curl\
-                        vim	\
-                        sudo	
-
-RUN         wget https://wordpress.org/wordpress-6.8.zip -P /var/www
-RUN         cd /var/www && unzip wordpress-6.8.zip && rm wordpress-6.8.zip
-RUN		    chown -R www-data:www-data /var/www/wordpress
+RUN	curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+	&& php wp-cli.phar --info \
+	&& chmod +x wp-cli.phar \
+	&& mv wp-cli.phar /usr/local/bin/wp
 
 
 # Copy the WordPress configuration script
