@@ -55,6 +55,10 @@ ps:
 	@echo "$(BLUE)📊 Container status:$(NC)"
 	$(DOCKER_COMPOSE) ps
 
+die:
+	sudo rm -rf $(WORDPRESS_DIR)
+	
+
 re: fclean all
 
 help:
