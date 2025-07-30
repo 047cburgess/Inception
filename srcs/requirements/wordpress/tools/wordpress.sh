@@ -54,7 +54,6 @@ if [ ! -f /var/www/wordpress/wp-config.php ]; then
 	--role=editor \
 	--allow-root
 
-fi
 	echo -e "${CYAN}Configuring Redis connection...${NC}"
 	wp config set WP_REDIS_HOST "${WP_REDIS_HOST}" --allow-root --path=/var/www/wordpress
 	wp config set WP_REDIS_PORT "${WP_REDIS_PORT}" --allow-root --path=/var/www/wordpress
@@ -69,6 +68,8 @@ fi
 	chown -R www-data:www-data /var/www/wordpress
 	chmod -R 755 /var/www/wordpress
 	chmod -R 775 /var/www/wordpress/wp-content
+
+fi
 
 # Start PHP-FPM
 echo -e "${GREEN}Starting PHP-FPM...${NC}"
