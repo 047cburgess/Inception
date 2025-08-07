@@ -58,7 +58,7 @@ services:
     container_name: redis
     env_file: .env
     volumes:
-      - wordpress:/var/www/wordpress
+      - redis:/var/lib/redis
     networks:
       - inception
     build: 
@@ -104,6 +104,13 @@ volumes:
       type: 'none'
       o: 'bind'
       device: '/home/caburges/data/wordpress'
+
+  redis:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/caburges/data/redis'
  
 networks:
   inception:
