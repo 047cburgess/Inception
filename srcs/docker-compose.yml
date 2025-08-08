@@ -90,6 +90,26 @@ services:
     depends_on:
       - wordpress
 
+  adminer:
+    container_name: adminer
+    build: 
+      context: requirements/bonus/adminer
+      dockerfile: Dockerfile
+    env_file: .env
+    networks:
+      - inception
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    depends_on:
+      - mariadb
+      - wordpress
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/adminer.php"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+
 volumes:
   mariadb:
     driver: local
