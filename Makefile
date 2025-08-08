@@ -2,6 +2,7 @@ DOCKER_COMPOSE = docker compose -f ./srcs/docker-compose.yml
 WORDPRESS_DIR = /home/caburges/data/wordpress
 MARIADB_DIR = /home/caburges/data/mariadb
 REDIS_DIR = /home/caburges/data/redis
+STATICSITE_DIR = /home/caburges/data/staticsite
 NAME = inception
 
 # Colors for output
@@ -28,6 +29,7 @@ build:
 	@mkdir -p $(WORDPRESS_DIR)
 	@mkdir -p $(MARIADB_DIR)
 	@mkdir -p $(REDIS_DIR)
+	@mkdir -p $(STATICSITE_DIR)
 	@echo "$(YELLOW)🚀 Building services...$(NC)"
 	$(DOCKER_COMPOSE) build
 
