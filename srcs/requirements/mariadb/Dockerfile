@@ -1,12 +1,15 @@
 FROM	debian:bullseye
 
-RUN	apt-get update && apt-get upgrade -y && apt-get install -y mariadb-server tini gettext-base
+RUN	apt-get update && apt-get install -y \
+	mariadb-server \
+	tini \
+	gettext-base
 
 # Create and set proper permissions for MySQL directory
 RUN	mkdir -p /var/lib/mysql /var/run/mysqld && \
     	chown -R mysql:mysql /var/lib/mysql /var/run/mysqld && \
-    	chmod 777 /var/lib/mysql && \
-    	chmod 777 /var/run/mysqld
+    	chmod 755 /var/lib/mysql && \
+    	chmod 755 /var/run/mysqld
 
 COPY conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
 COPY ./tools/init.sql /tmp/init.sql

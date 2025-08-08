@@ -1,10 +1,9 @@
 FROM	debian:bullseye
 
-RUN		apt-get update && apt-get upgrade -y && apt-get install -y \
+RUN		apt-get update && apt-get install -y \
 		openssl \
 		nginx \
 		curl \
-		vim \
 		sudo 
 
 RUN		rm -f /etc/nginx/nginx.conf

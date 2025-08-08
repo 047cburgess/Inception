@@ -66,9 +66,8 @@ if [ ! -f /var/www/wordpress/wp-config.php ]; then
 
 	echo -e "${CYAN}Setting ownership...${NC}"
 	chown -R www-data:www-data /var/www/wordpress
-	chmod -R 755 /var/www/wordpress
+	chmod -R 775 /var/www/wordpress
 	chmod -R 775 /var/www/wordpress/wp-content
-
 fi
 
 # Start PHP-FPM

@@ -1,28 +1,25 @@
 FROM	    debian:bullseye
 
-RUN	    apt-get update && apt-get upgrade -y && apt-get install -y	\
-		wget \
-                unzip \
-                curl \
-                vim \
-                sudo \	
-		php7.4 \
-		php7.4-cli \
-		php7.4-fpm \
-		php7.4-mysql \
-		mariadb-client \
-		php7.4-gd \
-		php7.4-curl \
-		php7.4-xml \
-		php7.4-mbstring \
-		php7.4-json \
-		php7.4-zip
-
-RUN	curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
-	&& php wp-cli.phar --info \
-	&& chmod +x wp-cli.phar \
-	&& mv wp-cli.phar /usr/local/bin/wp
-
+RUN	    apt-get update && apt-get upgrade -y && \
+		apt-get install -y	\
+        	curl \
+        	sudo \	
+			mariadb-client \
+			php7.4 \
+			php7.4-cli \
+			php7.4-fpm \
+			php7.4-mysql \
+			php7.4-gd \
+			php7.4-curl \
+			php7.4-xml \
+			php7.4-mbstring \
+			php7.4-json \
+			php7.4-redis \
+		&& curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+		&& php wp-cli.phar --info \
+		&& chmod +x wp-cli.phar \
+		&& mv wp-cli.phar /usr/local/bin/wp \
+	 	&& rm -rf /var/lib/apt/lists/* wp-cli.phar
 
 # Copy the WordPress configuration script
 COPY        tools/wordpress.sh /tmp/wordpress.sh
