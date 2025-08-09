@@ -1,9 +1,9 @@
-FROM debian:bullseye
+FROM debian:bookworm
 
 RUN	apt-get update && apt-get install -y \
-    php7.4 \
-	php7.4-cli \
-	php7.4-mysqli \
+    php8.2 \
+	php8.2-cli \
+	php8.2-mysqli \
 	curl \
 	&& rm -rf /var/lib/apt/lists/*
 

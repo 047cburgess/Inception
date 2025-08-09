@@ -72,4 +72,4 @@ fi
 
 # Start PHP-FPM
 echo -e "${GREEN}Starting PHP-FPM...${NC}"
-exec php-fpm7.4 -F --nodaemonize
+exec php-fpm8.2 -F

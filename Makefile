@@ -2,7 +2,7 @@ DOCKER_COMPOSE = docker compose -f ./srcs/docker-compose.yml
 WORDPRESS_DIR = /home/caburges/data/wordpress
 MARIADB_DIR = /home/caburges/data/mariadb
 REDIS_DIR = /home/caburges/data/redis
-STATICSITE_DIR = /home/caburges/data/staticsite
+PORTAINER_DIR = /home/caburges/data/portainer
 NAME = inception
 
 # Colors for output
@@ -19,7 +19,7 @@ $(NAME): up
 up: build
 	@echo "$(YELLOW)🚀 Starting services...$(NC)"
 	$(DOCKER_COMPOSE) up -d
-	@echo "$(GREEN)🚀 Services built! You can connect at caburges.42.fr$(NC)"
+	@echo "$(GREEN)🚀 Services built! You can connect at https://caburges.42.fr$(NC)"
 
 down:
 	@echo "$(RED)🛑 Stopping services...$(NC)"
@@ -29,7 +29,7 @@ build:
 	@mkdir -p $(WORDPRESS_DIR)
 	@mkdir -p $(MARIADB_DIR)
 	@mkdir -p $(REDIS_DIR)
-	@mkdir -p $(STATICSITE_DIR)
+	@mkdir -p $(PORTAINER_DIR)
 	@echo "$(YELLOW)🚀 Building services...$(NC)"
 	$(DOCKER_COMPOSE) build
 
