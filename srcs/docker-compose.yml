@@ -22,11 +22,11 @@ services:
     container_name: nginx
     volumes:
       - wordpress:/var/www/wordpress
-      - staticsite:/var/www/staticsite
     networks:
       - inception
     depends_on:
       - wordpress
+      - staticsite
     build: 
       context: requirements/nginx
       dockerfile: Dockerfile
@@ -119,11 +119,14 @@ services:
     env_file: .env
     networks:
       - inception
-    volumes:
-      - staticsite:/var/www/staticsite
     ports:
-      - "6667:6667"
+      - "1200:80"
     restart: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
 
 volumes:
   mariadb:
@@ -146,13 +149,6 @@ volumes:
       type: 'none'
       o: 'bind'
       device: '/home/caburges/data/redis'
-
-  staticsite:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: '/home/caburges/data/staticsite'
  
 networks:
   inception:
