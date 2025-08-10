@@ -12,8 +12,6 @@ RUN	mkdir -p /var/lib/redis /var/log/redis && \
 COPY	conf/redis.conf /etc/redis/redis.conf
 RUN		chown -R redis:redis /etc/redis/redis.conf
 
-EXPOSE	6379
-
 USER	redis
 
 CMD	["redis-server", "/etc/redis/redis.conf"]

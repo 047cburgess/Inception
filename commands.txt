@@ -1,0 +1,9 @@
+lftp ftpuser@localhost:~>
+
+ls	List files in current directory
+cd folder	Change directory
+get file.txt	Download a file
+put file.txt	Upload a file
+mget *.txt	Download multiple files
+mput *.txt	Upload multiple files
+exit or bye	Exit the FTP session

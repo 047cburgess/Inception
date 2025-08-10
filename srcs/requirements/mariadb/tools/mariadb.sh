@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export MYSQL_ROOT_PASSWORD=$(< /run/secrets/mysql_root_password)
+export MYSQL_PASSWORD=$(< /run/secrets/mysql_password)
+
 #import the variables from env into the init file
 envsubst < /tmp/init.sql > /tmp/init_real.sql
 

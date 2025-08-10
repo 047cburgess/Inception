@@ -33,6 +33,4 @@ COPY        /conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 # Make script executable
 RUN         chmod +x /tmp/wordpress.sh
 
-EXPOSE      9000
-
 ENTRYPOINT ["/tmp/wordpress.sh"]

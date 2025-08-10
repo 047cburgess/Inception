@@ -9,7 +9,10 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-echo "Beginning the script.sh of Wordpress"
+echo -e "Beginning the script.sh of Wordpress"
+
+export WORDPRESS_DB_ADMIN_PASSWORD=$(< /run/secrets/wordpress_db_admin_password)
+export WORDPRESS_DB_USER_PASSWORD=$(< /run/secrets/wordpress_db_user_password)
 
 mkdir -p /run/php
 
