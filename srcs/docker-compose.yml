@@ -1,11 +1,11 @@
 services:
   portainer:
     container_name: portainer
+    image: portainer:1.0
     networks:
       - inception
     build:
       context:  requirements/bonus/portainer
-      dockerfile: Dockerfile
     env_file: .env
     ports:
       - "9000:9000"
@@ -16,15 +16,19 @@ services:
       - wordpress
       - staticsite
       - nginx
+      - mariadb
+      - ftp
+      - adminer
+      - redis
     restart: on-failure
 
   mariadb:
     container_name: mariadb
+    image: mariadb:1.0
     networks:
       - inception
     build:
       context:  requirements/mariadb
-      dockerfile: Dockerfile
     env_file: .env
     volumes:
      - mariadb:/var/lib/mysql
@@ -37,6 +41,7 @@ services:
 
   nginx:
     container_name: nginx
+    image: nginx:1.0
     volumes:
       - wordpress:/var/www/wordpress
     networks:
@@ -46,7 +51,6 @@ services:
       - staticsite
     build: 
       context: requirements/nginx
-      dockerfile: Dockerfile
     env_file: .env
     ports:
       - "443:443"
@@ -55,6 +59,7 @@ services:
 
   wordpress:
     container_name: wordpress
+    image: wordpress:1.0
     env_file: .env
     volumes:
       - wordpress:/var/www/wordpress
@@ -73,13 +78,13 @@ services:
   redis:
     container_name: redis
     env_file: .env
+    image: redis:1.0
     volumes:
       - redis:/var/lib/redis
     networks:
       - inception
     build: 
       context: requirements/bonus/redis
-      dockerfile: Dockerfile
     restart: on-failure
     healthcheck:
       test: ["CMD", "redis-cli", "set", "healthcheck", "1"]
@@ -89,9 +94,9 @@ services:
 
   ftp:
     container_name: ftp
+    image: ftp:1.0
     build: 
       context: requirements/bonus/ftp
-      dockerfile: Dockerfile
     env_file: .env
     networks:
       - inception
@@ -106,9 +111,9 @@ services:
 
   adminer:
     container_name: adminer
+    image: adminer:1.0
     build: 
       context: requirements/bonus/adminer
-      dockerfile: Dockerfile
     env_file: .env
     networks:
       - inception
@@ -126,9 +131,9 @@ services:
 
   staticsite:
     container_name: staticsite
+    image: staticsite:1.0
     build: 
       context: requirements/bonus/staticsite
-      dockerfile: Dockerfile
     env_file: .env
     networks:
       - inception
