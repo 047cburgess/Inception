@@ -1,4 +1,23 @@
 services:
+  portainer:
+    container_name: portainer
+    networks:
+      - inception
+    build:
+      context:  requirements/bonus/portainer
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - "9000:9000"
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+     - portainer:/data
+    depends_on:
+      - wordpress
+      - staticsite
+      - nginx
+    restart: on-failure
+
   mariadb:
     container_name: mariadb
     networks:
@@ -10,8 +29,6 @@ services:
     volumes:
      - mariadb:/var/lib/mysql
     restart: unless-stopped
-    ports:
-      - "3306:3306"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 5s
@@ -52,8 +69,6 @@ services:
       redis:
         condition: service_healthy
     restart: on-failure
-    ports: 
-      - "9000:9000"
 
   redis:
     container_name: redis
@@ -66,8 +81,6 @@ services:
       context: requirements/bonus/redis
       dockerfile: Dockerfile
     restart: on-failure
-    ports: 
-      - "6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "set", "healthcheck", "1"]
       interval: 10s
@@ -149,6 +162,13 @@ volumes:
       type: 'none'
       o: 'bind'
       device: '/home/caburges/data/redis'
+
+  portainer:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/caburges/data/portainer'
  
 networks:
   inception:

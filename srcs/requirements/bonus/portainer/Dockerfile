@@ -1,13 +1,12 @@
 FROM debian:bookworm
 
-RUN apt-get update && \
-    apt-get install -y golang git && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y wget tar && apt-get clean
 
-WORKDIR /app
+RUN cd /opt \
+    && wget "https://github.com/portainer/portainer/releases/download/2.16.2/portainer-2.16.2-linux-amd64.tar.gz" -O "portainer.tar.gz" \
+    && tar xvpfz "portainer.tar.gz" \
+    && rm portainer.tar.gz
 
-RUN git clone --branch 2.20.2 https://github.com/portainer/portainer.git .
+EXPOSE 9000
 
-RUN go build -o portainer .
-
-CMD ["./portainer"]
+ENTRYPOINT ["/opt/portainer/portainer", "-H", "unix:///var/run/docker.sock"]
