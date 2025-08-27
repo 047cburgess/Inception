@@ -12,6 +12,8 @@ secrets:
     file: ../secrets/db_password.txt
   wordpress_db_user_password:
     file: ../secrets/user_db_password.txt
+  ftp_password:
+    file: ../secrets/user_db_password.txt
 
 services:
   portainer:
@@ -44,9 +46,9 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
     volumes:
      - mariadb:/var/lib/mysql
-    restart: unless-stopped
+    restart: on-failure
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$(< /run/secrets/mysql_root_password)"]
+      test: ["CMD", "/tmp/healthcheck.sh"]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -60,8 +62,10 @@ services:
     networks:
       - inception
     depends_on:
-      - wordpress
-      - staticsite
+      wordpress:
+        condition: service_healthy
+      staticsite:
+        condition: service_healthy
     build: 
       context: requirements/nginx
     secrets:
@@ -71,6 +75,11 @@ services:
       DOMAIN_NAME: ${DOMAIN_NAME}
     ports:
       - "443:443"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost", "--insecure"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: on-failure
 
   wordpress:
@@ -102,11 +111,15 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "pgrep", "php-fpm8.2"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     restart: on-failure
 
   redis:
     container_name: redis
-    env_file: .env
     image: redis:1.0
     volumes:
       - redis:/var/lib/redis
@@ -116,7 +129,7 @@ services:
       context: requirements/bonus/redis
     restart: on-failure
     healthcheck:
-      test: ["CMD", "redis-cli", "set", "healthcheck", "1"]
+      test: ["CMD", "redis-cli", "PING"]
       interval: 10s
       timeout: 3s
       retries: 5
@@ -126,32 +139,43 @@ services:
     image: ftp:1.0
     build: 
       context: requirements/bonus/ftp
-    env_file: .env
+    secrets:
+      - ftp_password
+    environment:
+      FTP_USER: ${FTP_USER}
+      PASV_ADDRESS: ${PASV_ADDRESS}
     networks:
       - inception
     volumes:
-      - wordpress:/var/www/wordpress
+      - wordpress:/var/www/wordpress:rw
     ports:
       - "21:21"
       - "21000-21010:21000-21010"
-    restart: on-failure
     depends_on:
-      - wordpress
+      wordpress:
+        condition: service_healthy
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "21"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   adminer:
     container_name: adminer
     image: adminer:1.0
     build: 
       context: requirements/bonus/adminer
-    env_file: .env
     networks:
       - inception
     ports:
       - "8080:8080"
     restart: on-failure
     depends_on:
-      - mariadb
-      - wordpress
+      mariadb:
+        condition: service_healthy
+      wordpress:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/adminer.php"]
       interval: 10s
@@ -163,7 +187,6 @@ services:
     image: staticsite:1.0
     build: 
       context: requirements/bonus/staticsite
-    env_file: .env
     networks:
       - inception
     ports:

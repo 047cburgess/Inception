@@ -10,4 +10,7 @@ envsubst < /tmp/init.sql > /tmp/init_real.sql
 chown mysql:mysql /tmp/init_real.sql
 chmod 644 /tmp/init_real.sql
 
+chown -R mysql:mysql /var/lib/mysql
+chmod -R 755 /var/lib/mysql
+
 exec mysqld --init-file=/tmp/init_real.sql

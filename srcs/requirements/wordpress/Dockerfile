@@ -4,12 +4,8 @@ RUN	    apt-get update && apt-get upgrade -y && \
 		apt-get install -y	\
         	curl \
         	sudo \	
-			mariadb-client 
-
-RUN     apt-get install -y \
-			php8.2 
-
-RUN     apt-get install -y \
+			mariadb-client \
+			php8.2 \
 			php8.2-cli \
 			php8.2-fpm \
 			php8.2-mysql \
@@ -22,15 +18,16 @@ RUN     curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp
 		&& php wp-cli.phar --info \
 		&& chmod +x wp-cli.phar \
 		&& mv wp-cli.phar /usr/local/bin/wp \
-	 	&& rm -rf /var/lib/apt/lists/* wp-cli.phar
+	 	&& rm -rf /var/lib/apt/lists/* wp-cli.phar \
+		&& mkdir -p /usr/src/wordpress \
+		&& wp core download --path=/usr/src/wordpress --allow-root
 
-# Copy the WordPress configuration script
-COPY        tools/wordpress.sh /tmp/wordpress.sh
+WORKDIR /var/www/wordpress
 
-COPY        /conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
+COPY    tools/wordpress.sh /tmp/wordpress.sh
 
+COPY    conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 
-# Make script executable
-RUN         chmod +x /tmp/wordpress.sh
+RUN     chmod +x /tmp/wordpress.sh
 
 ENTRYPOINT ["/tmp/wordpress.sh"]

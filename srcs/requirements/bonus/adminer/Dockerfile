@@ -5,20 +5,17 @@ RUN	apt-get update && apt-get install -y \
 	php8.2-cli \
 	php8.2-mysqli \
 	curl \
+	tini \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Create directory and download adminer
 RUN mkdir -p /var/www/html
 RUN curl -L -o /var/www/html/adminer.php https://www.adminer.org/latest.php
 
-# Set permissions in Dockerfile
-RUN chown -R www-data:www-data /var/www/html
-RUN chmod 644 /var/www/html/adminer.php
-
-
+# Copy start up scripts into the container
 COPY  tools/adminer.sh /tmp/adminer.sh
 RUN   chmod +x /tmp/adminer.sh
 
 EXPOSE 8080
 
-ENTRYPOINT ["/tmp/adminer.sh"]
+ENTRYPOINT ["/usr/bin/tini", "--", "/tmp/adminer.sh"]

@@ -1,9 +1,34 @@
 <!DOCTYPE html>
-	<head>
-		<title>Static site test</title>
-	</head>
-	<body>
-		<h1>Welcome to static site!</h1>
-		<p>This is a simple test page hosted by Nginx.</p>
-	</body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Image Link Page</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Casey's Favourite Cats</h1>
+        <p>Click an image to explore more</p>
+    </header>
+
+    <main class="grid">
+        <a href="https://www.catster.com/cat-breeds/birman/" class="card">
+            <img src="birman.jpeg" alt="Birman">
+            <div class="card-text">Birman</div>
+        </a>
+        <a href="https://wagwalking.com/daily/orange-cats" class="card">
+            <img src="orange.jpg" alt="Orange">
+            <div class="card-text">Orange</div>
+        </a>
+        <a href="https://www.woopets.fr/chat/race/cornish-rex/" class="card">
+            <img src="cornishrex.jpeg" alt="Cornish Rex">
+            <div class="card-text">Cornish Rex</div>
+        </a>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Inception Static Site</p>
+    </footer>
+</body>
 </html>
